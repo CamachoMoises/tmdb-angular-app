@@ -1,0 +1,60 @@
+<div class="search-page">
+  <header class="search-header">
+    <h1 class="app-title">TMDb Explorer</h1>
+    <app-search-bar (search)="onSearch($event)" />
+  </header>
+
+  <main class="search-content">
+    @switch (state.status) {
+      @case ('idle') {
+        <div class="state-container">
+          <mat-icon class="state-icon">movie_filter</mat-icon>
+          <p class="state-message">Busca una película para comenzar</p>
+        </div>
+      }
+
+      @case ('loading') {
+        <div class="state-container">
+          <mat-spinner diameter="48" />
+          <p class="state-message">Buscando películas...</p>
+        </div>
+      }
+
+      @case ('empty') {
+        <div class="state-container">
+          <mat-icon class="state-icon">search_off</mat-icon>
+          <p class="state-message">No se encontraron resultados</p>
+        </div>
+      }
+
+      @case ('error') {
+        <div class="state-container error">
+          <mat-icon class="state-icon error-icon">error_outline</mat-icon>
+          <p class="state-message">{{ state.error }}</p>
+        </div>
+      }
+
+      @case ('success') {
+        <div class="results-info">
+          <p>{{ state.data.length }} resultados encontrados</p>
+        </div>
+        <app-movie-list [movies]="state.data" />
+
+        @if (state.totalPages > 1) {
+          <div class="pagination">
+            <button [disabled]="state.page === 1" (click)="onPageChange(state.page - 1)">
+              Anterior
+            </button>
+            <span>Página {{ state.page }} de {{ state.totalPages }}</span>
+            <button
+              [disabled]="state.page === state.totalPages"
+              (click)="onPageChange(state.page + 1)"
+            >
+              Siguiente
+            </button>
+          </div>
+        }
+      }
+    }
+  </main>
+</div>

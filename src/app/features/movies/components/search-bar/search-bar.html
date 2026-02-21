@@ -1,0 +1,16 @@
+<mat-form-field appearance="outline" class="search-field">
+  <mat-label>Buscar películas...</mat-label>
+  <input
+    matInput
+    [formControl]="searchControl"
+    placeholder="Ej: Batman, Inception..."
+    autocomplete="off"
+  />
+  <mat-icon matSuffix>search</mat-icon>
+  @if (searchControl.value) {
+    <mat-icon matSuffix class="clear-icon" (click)="searchControl.reset()">close</mat-icon>
+  }
+  @if (searchControl.value.length > 0 && searchControl.value.length < 2) {
+    <mat-hint class="hint-error">Escribe al menos 2 caracteres</mat-hint>
+  }
+</mat-form-field>

@@ -1,0 +1,5 @@
+<div class="movie-grid">
+  @for (movie of movies; track movie.id) {
+    <app-movie-card [movie]="movie" />
+  }
+</div>
