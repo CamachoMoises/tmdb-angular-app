@@ -1,1 +1,78 @@
-<p>detail works!</p>
+<div class="detail-page">
+  <button class="back-btn" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Volver a resultados
+  </button>
+
+  @switch (status) {
+    @case ('loading') {
+      <div class="state-container">
+        <mat-spinner diameter="48" />
+        <p>Cargando película...</p>
+      </div>
+    }
+
+    @case ('error') {
+      <div class="state-container error">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-stroked-button (click)="goBack()">Volver</button>
+      </div>
+    }
+
+    @case ('success') {
+      @if (movie) {
+        <div class="detail-container">
+          <div class="poster-col">
+            <img
+              [src]="movie.poster_path | imageUrl: 'w500'"
+              [alt]="movie.title"
+              class="poster"
+              (error)="onImageError($event)"
+            />
+          </div>
+
+          <div class="info-col">
+            <h1 class="title">{{ movie.title }}</h1>
+
+            @if (movie.tagline) {
+              <p class="tagline">{{ movie.tagline }}</p>
+            }
+
+            <div class="meta">
+              <span class="meta-item">
+                <mat-icon>calendar_today</mat-icon>
+                {{ movie.release_date | date: 'dd/MM/yyyy' }}
+              </span>
+              <span class="meta-item">
+                <mat-icon>schedule</mat-icon>
+                {{ runtimeFormatted }}
+              </span>
+              <span class="meta-item rating">
+                <mat-icon>star</mat-icon>
+                {{ movie.vote_average | number: '1.1-1' }} / 10
+              </span>
+            </div>
+
+            @if (movie.genres.length) {
+              <div class="genres">
+                <mat-chip-set>
+                  @for (genre of movie.genres; track genre.id) {
+                    <mat-chip>{{ genre.name }}</mat-chip>
+                  }
+                </mat-chip-set>
+              </div>
+            }
+
+            @if (movie.overview) {
+              <div class="overview">
+                <h3>Sinopsis</h3>
+                <p>{{ movie.overview }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  }
+</div>
