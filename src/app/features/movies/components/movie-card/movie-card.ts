@@ -26,11 +26,13 @@ export class MovieCard {
     return this.favorites.isFavorite(this.movie.id);
   }
 
-  toggleFavorite(event: Event): void {
+toggleFavorite(event: Event): void {
     event.stopPropagation();
-    this.isFavorite
-      ? this.favorites.removeFavorite(this.movie.id)
-      : this.favorites.addFavorite(this.movie);
+    if (this.isFavorite) {
+      this.favorites.removeFavorite(this.movie.id);
+    } else {
+      this.favorites.addFavorite(this.movie);
+    }
   }
 
   navigateToDetail(): void {

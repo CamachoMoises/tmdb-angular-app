@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TmdbService } from './tmdb.service';
-import { environment } from '../../../environments/environment';
 import { Movie } from '../../shared/models/movie.model';
 import { MovieDetail } from '../../shared/models/movie-detail.model';
 import { PaginatedResponse } from '../../shared/models/api-response.model';

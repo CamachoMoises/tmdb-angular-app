@@ -58,11 +58,13 @@ export class Detail implements OnInit {
     return this.movie ? this.favorites.isFavorite(this.movie.id) : false;
   }
 
-  toggleFavorite(): void {
+toggleFavorite(): void {
     if (!this.movie) return;
-    this.isFavorite
-      ? this.favorites.removeFavorite(this.movie.id)
-      : this.favorites.addFavorite(this.movie);
+    if (this.isFavorite) {
+      this.favorites.removeFavorite(this.movie.id);
+    } else {
+      this.favorites.addFavorite(this.movie);
+    }
   }
 
   goBack(): void {

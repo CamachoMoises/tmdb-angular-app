@@ -1,4 +1,4 @@
-declare const process: { env: { [key: string]: string } };
+declare const process: { env: Record<string, string> };
 
 export const environment = {
   production: false,

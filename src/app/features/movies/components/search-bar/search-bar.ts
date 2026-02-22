@@ -20,7 +20,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class SearchBar implements OnChanges {
   @Input() initialQuery = '';
-  @Output() search = new EventEmitter<string>();
+  @Output() searchChange = new EventEmitter<string>();
 
   searchControl = new FormControl('', { nonNullable: true });
 
@@ -30,7 +30,7 @@ export class SearchBar implements OnChanges {
       distinctUntilChanged(),
       takeUntilDestroyed()
     ).subscribe(value => {
-      this.search.emit(value);
+      this.searchChange.emit(value);
     });
   }
 

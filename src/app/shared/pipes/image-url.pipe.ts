@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
   standalone: true
 })
 export class ImageUrlPipe implements PipeTransform {
-  transform(posterPath: string | null, size: string = 'w200'): string {
+  transform(posterPath: string | null, size = 'w200'): string {
     if (!posterPath) return 'images/no-poster.png';
     return `${environment.tmdbImageUrl}/${size}${posterPath}`;
   }
