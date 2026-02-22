@@ -38,6 +38,10 @@
             @if (movie.tagline) {
               <p class="tagline">{{ movie.tagline }}</p>
             }
+            <button class="favorite-btn" (click)="toggleFavorite()">
+              <mat-icon>{{ isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+              {{ isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}
+            </button>
 
             <div class="meta">
               <span class="meta-item">

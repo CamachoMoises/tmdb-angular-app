@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { TmdbService } from '../../../../core/services/tmdb.service';
+import { FavoritesService } from '../../../../core/services/favorites.service';
 import { MovieDetail } from '../../../../shared/models/movie-detail.model';
 import { ImageUrlPipe } from '../../../../shared/pipes/image-url.pipe';
 
@@ -27,6 +28,7 @@ export class Detail implements OnInit {
   private readonly tmdb = inject(TmdbService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly favorites = inject(FavoritesService);
 
   movie: MovieDetail | null = null;
   status: 'loading' | 'success' | 'error' = 'loading';
@@ -50,6 +52,17 @@ export class Detail implements OnInit {
         this.status = 'error';
       }
     });
+  }
+
+  get isFavorite(): boolean {
+    return this.movie ? this.favorites.isFavorite(this.movie.id) : false;
+  }
+
+  toggleFavorite(): void {
+    if (!this.movie) return;
+    this.isFavorite
+      ? this.favorites.removeFavorite(this.movie.id)
+      : this.favorites.addFavorite(this.movie);
   }
 
   goBack(): void {

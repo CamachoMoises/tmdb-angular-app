@@ -124,3 +124,29 @@
     margin: 0;
   }
 }
+
+.favorite-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 2px solid #ef4444;
+  border-radius: 8px;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 8px 16px;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #ef4444;
+    color: white;
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}

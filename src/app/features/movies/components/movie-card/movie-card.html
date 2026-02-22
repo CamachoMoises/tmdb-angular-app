@@ -1,11 +1,20 @@
 <mat-card class="movie-card" (click)="navigateToDetail()">
-  <img
-    mat-card-image
-    [src]="movie.poster_path | imageUrl: 'w300'"
-    [alt]="movie.title"
-    class="poster"
-    (error)="onImageError($event)"
-  />
+  <div class="poster-wrapper">
+    <img
+      mat-card-image
+      [src]="movie.poster_path | imageUrl: 'w300'"
+      [alt]="movie.title"
+      class="poster"
+      (error)="onImageError($event)"
+    />
+    <button
+      class="favorite-btn"
+      (click)="toggleFavorite($event)"
+      [title]="isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+    >
+      <mat-icon>{{ isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+    </button>
+  </div>
   <mat-card-content>
     <h3 class="title">{{ movie.title }}</h3>
     <div class="meta">
