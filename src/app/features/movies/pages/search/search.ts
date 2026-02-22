@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import { EMPTY, catchError } from 'rxjs';
+import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TmdbService } from '../../../../core/services/tmdb.service';
 import { SearchState } from '../../../../shared/models/search-state.model';
@@ -28,6 +28,8 @@ export class Search {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
+  private readonly searchTrigger$ = new Subject<{ query: string; page: number }>();
+
   state: SearchState = {
     status: 'idle',
     data: [],
@@ -39,6 +41,26 @@ export class Search {
   currentQuery = '';
 
   constructor() {
+    this.searchTrigger$.pipe(
+      tap(() => this.setState({ status: 'loading', error: null })),
+      switchMap(({ query, page }) =>
+        this.tmdb.searchMovies(query, page).pipe(
+          catchError(err => {
+            this.setState({ status: 'error', error: err.userMessage });
+            return EMPTY;
+          })
+        )
+      ),
+      takeUntilDestroyed()
+    ).subscribe(response => {
+      this.setState({
+        status: response.results.length ? 'success' : 'empty',
+        data: response.results,
+        page: response.page,
+        totalPages: response.total_pages
+      });
+    });
+
     this.route.queryParams.pipe(
       takeUntilDestroyed()
     ).subscribe(params => {
@@ -46,20 +68,7 @@ export class Search {
       const page = Number(params['page']) || 1;
 
       if (this.currentQuery.length >= 2) {
-        this.setState({ status: 'loading' });
-        this.tmdb.searchMovies(this.currentQuery, page).pipe(
-          catchError(err => {
-            this.setState({ status: 'error', error: err.userMessage });
-            return EMPTY;
-          })
-        ).subscribe(response => {
-          this.setState({
-            status: response.results.length ? 'success' : 'empty',
-            data: response.results,
-            page: response.page,
-            totalPages: response.total_pages
-          });
-        });
+        this.searchTrigger$.next({ query: this.currentQuery, page });
       }
     });
   }
@@ -73,41 +82,15 @@ export class Search {
       return;
     }
 
-    this.setState({ status: 'loading', error: null });
+    this.currentQuery = query;
     this.router.navigate([], { queryParams: { q: query, page: 1 } });
 
-    this.tmdb.searchMovies(query, 1).pipe(
-      catchError(err => {
-        this.setState({ status: 'error', error: err.userMessage });
-        return EMPTY;
-      })
-    ).subscribe(response => {
-      this.setState({
-        status: response.results.length ? 'success' : 'empty',
-        data: response.results,
-        page: response.page,
-        totalPages: response.total_pages
-      });
-    });
+    this.searchTrigger$.next({ query, page: 1 });
   }
 
   onPageChange(page: number): void {
-    this.setState({ status: 'loading' });
     this.router.navigate([], { queryParams: { q: this.currentQuery, page } });
-
-    this.tmdb.searchMovies(this.currentQuery, page).pipe(
-      catchError(err => {
-        this.setState({ status: 'error', error: err.userMessage });
-        return EMPTY;
-      })
-    ).subscribe(response => {
-      this.setState({
-        status: response.results.length ? 'success' : 'empty',
-        data: response.results,
-        page: response.page,
-        totalPages: response.total_pages
-      });
-    });
+    this.searchTrigger$.next({ query: this.currentQuery, page });
   }
 
   private setState(partial: Partial<SearchState>): void {

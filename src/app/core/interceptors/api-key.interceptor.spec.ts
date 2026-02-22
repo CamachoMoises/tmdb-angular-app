@@ -1,17 +1,17 @@
-import { ApiKeyInterceptor } from './api-key.interceptor';
+import { apiKeyInterceptor } from './api-key.interceptor';
 import { TestBed } from '@angular/core/testing';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { environment } from '../../../environments/environment';
 
-describe('ApiKeyInterceptor', () => {
+describe('apiKeyInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(withInterceptors([ApiKeyInterceptor])),
+        provideHttpClient(withInterceptors([apiKeyInterceptor])),
         provideHttpClientTesting()
       ]
     });

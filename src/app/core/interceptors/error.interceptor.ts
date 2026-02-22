@@ -8,7 +8,7 @@ const getUserMessage = (error: HttpErrorResponse): string => {
   return 'Error inesperado. Intenta de nuevo.';
 };
 
-export const ErrorInterceptor: HttpInterceptorFn = (req, next) => {
+export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       const userMessage = getUserMessage(error);

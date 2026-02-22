@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from "@angular/common/http";
 import { environment } from "../../../environments/environment.development";
 
-export const ApiKeyInterceptor: HttpInterceptorFn = (req, next) => {
+export const apiKeyInterceptor: HttpInterceptorFn = (req, next) => {
   if (!req.url.includes(environment.tmdbBaseUrl)) return next(req);
 
   const cloned = req.clone({
