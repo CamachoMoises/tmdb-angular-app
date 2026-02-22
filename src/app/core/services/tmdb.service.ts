@@ -10,19 +10,23 @@ import { PaginatedResponse } from '../../shared/models/api-response.model';
 @Injectable({ providedIn: 'root' })
 export class TmdbService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.tmdbBaseUrl;
 
   searchMovies(query: string, page = 1): Observable<PaginatedResponse<Movie>> {
-    return this.http.get<PaginatedResponse<Movie>>(`${this.baseUrl}/search/movie`, {
-      params: { query, page: page.toString() }
-    });
+    return this.http.get<PaginatedResponse<Movie>>(
+      `${environment.tmdbBaseUrl}/search/movie`,
+      { params: { query, page: page.toString() } }
+    );
   }
 
   getMovieById(id: number): Observable<MovieDetail> {
-    return this.http.get<MovieDetail>(`${this.baseUrl}/movie/${id}`);
+    return this.http.get<MovieDetail>(
+      `${environment.tmdbBaseUrl}/movie/${id}`
+    );
   }
 
   getGenres(): Observable<{ genres: Genre[] }> {
-    return this.http.get<{ genres: Genre[] }>(`${this.baseUrl}/genre/movie/list`);
+    return this.http.get<{ genres: Genre[] }>(
+      `${environment.tmdbBaseUrl}/genre/movie/list`
+    );
   }
 }
