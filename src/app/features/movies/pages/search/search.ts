@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import { EMPTY, switchMap, tap, catchError, of } from 'rxjs';
+import { EMPTY, catchError } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TmdbService } from '../../../../core/services/tmdb.service';
 import { SearchState } from '../../../../shared/models/search-state.model';
@@ -43,6 +43,24 @@ export class Search {
       takeUntilDestroyed()
     ).subscribe(params => {
       this.currentQuery = params['q'] ?? '';
+      const page = Number(params['page']) || 1;
+
+      if (this.currentQuery.length >= 2) {
+        this.setState({ status: 'loading' });
+        this.tmdb.searchMovies(this.currentQuery, page).pipe(
+          catchError(err => {
+            this.setState({ status: 'error', error: err.userMessage });
+            return EMPTY;
+          })
+        ).subscribe(response => {
+          this.setState({
+            status: response.results.length ? 'success' : 'empty',
+            data: response.results,
+            page: response.page,
+            totalPages: response.total_pages
+          });
+        });
+      }
     });
   }
 

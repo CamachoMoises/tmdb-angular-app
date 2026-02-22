@@ -1,4 +1,4 @@
-<mat-card class="movie-card" [routerLink]="['/movies', movie.id]">
+<mat-card class="movie-card" (click)="navigateToDetail()">
   <img
     mat-card-image
     [src]="movie.poster_path | imageUrl: 'w300'"
@@ -11,7 +11,7 @@
     <div class="meta">
       <span class="year">{{ releaseYear }}</span>
       <mat-chip-set>
-        <mat-chip class="rating"> {{ movie.vote_average | number: '1.1-1' }}</mat-chip>
+        <mat-chip class="rating">{{ movie.vote_average | number: '1.1-1' }}</mat-chip>
       </mat-chip-set>
     </div>
   </mat-card-content>

@@ -32,7 +32,13 @@ export class Detail implements OnInit {
   status: 'loading' | 'success' | 'error' = 'loading';
   error: string | null = null;
 
+  private returnQuery: string | null = null;
+  private returnPage: string | null = null;
+
   ngOnInit(): void {
+    this.returnQuery = this.route.snapshot.queryParamMap.get('q');
+    this.returnPage = this.route.snapshot.queryParamMap.get('page');
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.tmdb.getMovieById(id).subscribe({
       next: movie => {
@@ -47,7 +53,12 @@ export class Detail implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/movies']);
+    const queryParams: Record<string, string> = {};
+    if (this.returnQuery) queryParams['q'] = this.returnQuery;
+    if (this.returnPage) queryParams['page'] = this.returnPage;
+    this.router.navigate(['/movies'], {
+      queryParams: Object.keys(queryParams).length ? queryParams : {}
+    });
   }
 
   get runtimeFormatted(): string {

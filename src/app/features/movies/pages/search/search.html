@@ -1,7 +1,7 @@
 <div class="search-page">
   <header class="search-header">
     <h1 class="app-title">TMDb Explorer</h1>
-    <app-search-bar (search)="onSearch($event)" />
+    <app-search-bar [initialQuery]="currentQuery" (search)="onSearch($event)" />
   </header>
 
   <main class="search-content">
