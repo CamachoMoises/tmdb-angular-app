@@ -1,79 +1,121 @@
-<div class="detail-page">
-  <button class="back-btn" (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
-    Volver a resultados
-  </button>
+<div class="min-h-screen bg-netflix-dark">
+  <div class="px-6 pt-6">
+    <button
+      class="flex items-center gap-2 text-netflix-light hover:text-white transition-colors text-sm"
+      (click)="goBack()"
+    >
+      <lucide-icon [img]="ArrowLeftIcon" size="16" /> Volver
+    </button>
+  </div>
 
   @switch (status) {
     @case ('loading') {
-      <div class="state-container">
-        <mat-spinner diameter="48" />
-        <p>Cargando película...</p>
+      <div class="flex flex-col items-center justify-center py-32 gap-4">
+        <div
+          class="w-12 h-12 border-4 border-netflix-gray border-t-netflix-red rounded-full animate-spin"
+        ></div>
+        <p class="text-netflix-light">Cargando película...</p>
       </div>
     }
 
     @case ('error') {
-      <div class="state-container error">
-        <mat-icon class="error-icon">error_outline</mat-icon>
-        <p>{{ error }}</p>
-        <button mat-stroked-button (click)="goBack()">Volver</button>
+      <div class="flex flex-col items-center justify-center py-32 gap-4">
+        <lucide-icon [img]="AlertIcon" size="64" class="text-red-500" />
+        <p class="text-red-400 text-lg">{{ error }}</p>
+        <button
+          class="px-6 py-2 border border-netflix-gray rounded text-white hover:border-netflix-red hover:text-netflix-red transition-colors"
+          (click)="goBack()"
+        >
+          Volver
+        </button>
       </div>
     }
 
     @case ('success') {
       @if (movie) {
-        <div class="detail-container">
-          <div class="poster-col">
-            <img
-              [src]="movie.poster_path | imageUrl: 'w500'"
-              [alt]="movie.title"
-              class="poster"
-              (error)="onImageError($event)"
-            />
-          </div>
+        <!-- Hero backdrop -->
+        <div class="relative">
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-netflix-dark via-netflix-dark/80 to-transparent z-10"
+          ></div>
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-netflix-dark to-transparent z-10"
+          ></div>
 
-          <div class="info-col">
-            <h1 class="title">{{ movie.title }}</h1>
-
-            @if (movie.tagline) {
-              <p class="tagline">{{ movie.tagline }}</p>
-            }
-            <button class="favorite-btn" (click)="toggleFavorite()">
-              <mat-icon>{{ isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
-              {{ isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}
-            </button>
-
-            <div class="meta">
-              <span class="meta-item">
-                <mat-icon>calendar_today</mat-icon>
-                {{ movie.release_date | date: 'dd/MM/yyyy' }}
-              </span>
-              <span class="meta-item">
-                <mat-icon>schedule</mat-icon>
-                {{ runtimeFormatted }}
-              </span>
-              <span class="meta-item rating">
-                <mat-icon>star</mat-icon>
-                {{ movie.vote_average | number: '1.1-1' }} / 10
-              </span>
+          <!-- Content -->
+          <div class="relative z-20 max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row gap-10">
+            <!-- Poster -->
+            <div class="flex-shrink-0">
+              <img
+                [src]="movie.poster_path | imageUrl: 'w500'"
+                [alt]="movie.title"
+                class="w-48 md:w-64 rounded-lg shadow-2xl shadow-black"
+                (error)="onImageError($event)"
+              />
             </div>
 
-            @if (movie.genres.length) {
-              <div class="genres">
-                <mat-chip-set>
-                  @for (genre of movie.genres; track genre.id) {
-                    <mat-chip>{{ genre.name }}</mat-chip>
-                  }
-                </mat-chip-set>
-              </div>
-            }
+            <!-- Info -->
+            <div class="flex flex-col gap-4">
+              <h1 class="text-3xl md:text-5xl font-bold text-white">{{ movie.title }}</h1>
 
-            @if (movie.overview) {
-              <div class="overview">
-                <h3>Sinopsis</h3>
-                <p>{{ movie.overview }}</p>
+              @if (movie.tagline) {
+                <p class="text-netflix-light italic text-lg">{{ movie.tagline }}</p>
+              }
+
+              <!-- Meta -->
+              <div class="flex flex-wrap gap-4 text-sm text-netflix-light">
+                <span class="flex items-center gap-1">
+                  <lucide-icon [img]="StarIcon" size="16" class="text-yellow-400" />
+                  <strong class="text-yellow-400">{{
+                    movie.vote_average | number: '1.1-1'
+                  }}</strong>
+                  / 10
+                </span>
+                <span class="flex items-center gap-1">
+                  <lucide-icon [img]="CalendarIcon" size="16" />
+                  {{ movie.release_date | date: 'yyyy' }}
+                </span>
+                <span class="flex items-center gap-1">
+                  <lucide-icon [img]="ClockIcon" size="16" />
+                  {{ runtimeFormatted }}
+                </span>
               </div>
-            }
+
+              <!-- Géneros -->
+              @if (movie.genres.length) {
+                <div class="flex flex-wrap gap-2">
+                  @for (genre of movie.genres; track genre.id) {
+                    <span
+                      class="px-3 py-1 rounded-full border border-zinc-600 text-zinc-300 text-xs"
+                    >
+                      {{ genre.name }}
+                    </span>
+                  }
+                </div>
+              }
+
+              <!-- Favorito -->
+              <button
+                class="flex items-center gap-2 w-fit px-5 py-2 rounded border transition-colors text-sm"
+                [class]="
+                  isFavorite
+                    ? 'border-netflix-red text-netflix-red hover:bg-netflix-red hover:text-white'
+                    : 'border-zinc-600 text-zinc-300 hover:border-netflix-red hover:text-netflix-red'
+                "
+                (click)="toggleFavorite()"
+              >
+                <lucide-icon [img]="isFavorite ? HeartIcon : HeartPlusIcon" size="16" />
+                {{ isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}
+              </button>
+
+              <!-- Sinopsis -->
+              @if (movie.overview) {
+                <div class="mt-2">
+                  <h3 class="text-white font-semibold mb-2">Sinopsis</h3>
+                  <p class="text-zinc-400 leading-relaxed max-w-2xl">{{ movie.overview }}</p>
+                </div>
+              }
+            </div>
           </div>
         </div>
       }

@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LucideAngularModule, ArrowLeft, TriangleAlert, Star, CalendarDays, Clock8, Heart, HeartPlus } from 'lucide-angular';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { TmdbService } from '../../../../core/services/tmdb.service';
@@ -16,10 +16,10 @@ import { ImageUrlPipe } from '../../../../shared/pipes/image-url.pipe';
   imports: [
     CommonModule,
     MatProgressSpinnerModule,
-    MatIconModule,
     MatChipsModule,
     MatButtonModule,
-    ImageUrlPipe
+    ImageUrlPipe,
+    LucideAngularModule
   ],
   templateUrl: './detail.html',
   styleUrl: './detail.scss'
@@ -29,6 +29,14 @@ export class Detail implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly favorites = inject(FavoritesService);
+
+  readonly ArrowLeftIcon = ArrowLeft;
+  readonly AlertIcon = TriangleAlert;
+  readonly StarIcon = Star;
+  readonly CalendarIcon = CalendarDays;
+  readonly ClockIcon = Clock8;
+  readonly HeartIcon = Heart;
+  readonly HeartPlusIcon = HeartPlus;
 
   movie: MovieDetail | null = null;
   status: 'loading' | 'success' | 'error' = 'loading';
@@ -58,7 +66,7 @@ export class Detail implements OnInit {
     return this.movie ? this.favorites.isFavorite(this.movie.id) : false;
   }
 
-toggleFavorite(): void {
+  toggleFavorite(): void {
     if (!this.movie) return;
     if (this.isFavorite) {
       this.favorites.removeFavorite(this.movie.id);

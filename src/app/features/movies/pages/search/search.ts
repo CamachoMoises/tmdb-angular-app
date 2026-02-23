@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { LucideAngularModule, TriangleAlert, Clapperboard, Binoculars } from 'lucide-angular';
+
 import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TmdbService } from '../../../../core/services/tmdb.service';
@@ -18,7 +20,8 @@ import { MovieList } from '../../components/movie-list/movie-list';
     MatProgressSpinnerModule,
     MatIconModule,
     SearchBar,
-    MovieList
+    MovieList,
+    LucideAngularModule
   ],
   templateUrl: './search.html',
   styleUrl: './search.scss'
@@ -29,6 +32,10 @@ export class Search {
   private readonly route = inject(ActivatedRoute);
 
   private readonly searchTrigger$ = new Subject<{ query: string; page: number }>();
+
+  readonly TriangleAlertIcon = TriangleAlert;
+  readonly ClapperboardIcon = Clapperboard;
+  readonly BinocularsIcon = Binoculars;
 
   state: SearchState = {
     status: 'idle',

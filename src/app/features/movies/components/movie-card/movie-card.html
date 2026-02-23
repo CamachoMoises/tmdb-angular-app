@@ -1,27 +1,51 @@
-<mat-card class="movie-card" (click)="navigateToDetail()">
-  <div class="poster-wrapper">
+<div
+  class="relative group cursor-pointer rounded-lg overflow-hidden bg-zinc-900 transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-black"
+  (click)="navigateToDetail()"
+  (keyup.enter)="navigateToDetail()"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="'Ver detalle de ' + movie.title"
+>
+  <div class="relative aspect-[2/3]">
     <img
-      mat-card-image
       [src]="movie.poster_path | imageUrl: 'w300'"
       [alt]="movie.title"
-      class="poster"
+      class="w-full h-full object-cover"
       (error)="onImageError($event)"
     />
+
+    <div
+      class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    ></div>
+
     <button
-      class="favorite-btn"
+      class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/70 flex items-center justify-center transition-opacity duration-300 hover:bg-netflix-red z-10"
+      [class.opacity-0]="!isFavorite"
+      [class.group-hover:opacity-100]="!isFavorite"
+      [class.opacity-100]="isFavorite"
       (click)="toggleFavorite($event)"
-      [title]="isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+      (keyup.enter)="toggleFavorite($event)"
+      [attr.aria-label]="isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'"
     >
-      <mat-icon>{{ isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+      <span class="text-sm">
+        @if (isFavorite) {
+          <lucide-icon color="red" [img]="HeartIcon" size="20" />
+        } @else {
+          <lucide-icon [img]="HeartPlusIcon" size="20" />
+        }
+      </span>
     </button>
-  </div>
-  <mat-card-content>
-    <h3 class="title">{{ movie.title }}</h3>
-    <div class="meta">
-      <span class="year">{{ releaseYear }}</span>
-      <mat-chip-set>
-        <mat-chip class="rating">{{ movie.vote_average | number: '1.1-1' }}</mat-chip>
-      </mat-chip-set>
+
+    <div class="absolute top-2 left-2 bg-black/70 rounded px-2 py-0.5 flex items-center gap-1">
+      <span class="text-yellow-400 text-xs"><lucide-icon [img]="StarIcon" size="20" /></span>
+      <span class="text-white text-xs font-semibold">{{
+        movie.vote_average | number: '1.1-1'
+      }}</span>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+
+  <div class="p-3">
+    <h3 class="text-white text-sm font-semibold truncate">{{ movie.title }}</h3>
+    <p class="text-zinc-500 text-xs mt-0.5">{{ releaseYear }}</p>
+  </div>
+</div>

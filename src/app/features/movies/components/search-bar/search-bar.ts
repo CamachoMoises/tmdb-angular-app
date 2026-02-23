@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { LucideAngularModule, Search } from 'lucide-angular';
+
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -13,7 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ReactiveFormsModule,
     MatInputModule,
     MatFormFieldModule,
-    MatIconModule
+    LucideAngularModule
   ],
   templateUrl: './search-bar.html',
   styleUrl: './search-bar.scss'
@@ -21,6 +22,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class SearchBar implements OnChanges {
   @Input() initialQuery = '';
   @Output() searchChange = new EventEmitter<string>();
+
+  readonly SearchIcon = Search;
 
   searchControl = new FormControl('', { nonNullable: true });
 

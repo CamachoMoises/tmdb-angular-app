@@ -1,18 +1,16 @@
 import { Component, Input, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { LucideAngularModule, Star, Heart, HeartPlus } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
 import { Movie } from '../../../../shared/models/movie.model';
 import { ImageUrlPipe } from '../../../../shared/pipes/image-url.pipe';
 import { FavoritesService } from '../../../../core/services/favorites.service';
 
+
 @Component({
   selector: 'app-movie-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule, MatButtonModule, ImageUrlPipe],
+  imports: [CommonModule, LucideAngularModule, ImageUrlPipe],
   templateUrl: './movie-card.html',
   styleUrl: './movie-card.scss'
 })
@@ -22,11 +20,15 @@ export class MovieCard {
   private readonly router = inject(Router);
   private readonly favorites = inject(FavoritesService);
 
+  readonly StarIcon = Star;
+  readonly HeartIcon = Heart;
+  readonly HeartPlusIcon = HeartPlus;
+
   get isFavorite(): boolean {
     return this.favorites.isFavorite(this.movie.id);
   }
 
-toggleFavorite(event: Event): void {
+  toggleFavorite(event: Event): void {
     event.stopPropagation();
     if (this.isFavorite) {
       this.favorites.removeFavorite(this.movie.id);
@@ -44,7 +46,7 @@ toggleFavorite(event: Event): void {
   }
 
   get releaseYear(): string {
-    return this.movie.release_date?.split('-')[0] ?? 'N/A';
+    return this.movie.release_date?.split('-')[0] || 'N/A';
   }
 
   onImageError(event: Event): void {
