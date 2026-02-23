@@ -132,6 +132,23 @@ Se usa Tailwind v3 porque v4 cambió completamente su integración con PostCSS y
 
 ---
 
+## Uso de agentes de IA
+En este proyecto se utilizaron agentes de inteligencia artificial para acelerar el desarrollo.
+- Claude Code
+  - Debugging de errores específicos
+  - Diseño la estructura de carpetas.
+  - Diseño del dark mode estilo Netflix/IMDb
+  - Creación de patrón Subject + switchMap como pipeline central de búsquedas.
+- Visual Studio Chat (GPT 4.1, Raptor Mini)
+  - Corrección de errores de configuración de librerías.
+  - Configuración del Tailwind
+  - Creación de los modelos de datos
+  - Diagnóstico del error NG0908 de Zone.js
+- OpenCode (terminal agent)
+  - Migración de Karma a Vitest como librería de pruebas.
+  - Corrección de errores de ESLint.
+  - Resolvió el conflicto de SSR/prerendering.
+
 ## Extras implementados
 
 | Extra | Estado |
@@ -156,6 +173,122 @@ Se usa Tailwind v3 porque v4 cambió completamente su integración con PostCSS y
 - **Página de favoritos**: una ruta `/favorites` dedicada con su propio listado y gestión
 - **Filtro por género**: implementar una vista separada de exploración usando `/discover/movie` donde el filtro por género sí funciona correctamente, manteniendo la integridad de la paginación
 - **Skeleton loaders**: reemplazar el spinner por placeholders del tamaño real del contenido para una mejor experiencia de carga
-- **E2E tests**: cobertura con Playwright para los flujos principales — búsqueda, navegación al detalle y favoritos
-- **Prettier**: configurar junto con ESLint para formateo automático consistente
-- **Página 404**: vista personalizada para rutas no encontradas
+
+
+## Plan de desarrollo detallado
+
+A continuación se describe el plan original seguido para la implementación del proyecto, incluyendo la arquitectura, el stack tecnológico, el cronograma de fases y los criterios de evaluación considerados.
+
+---
+
+### Stack tecnológico
+
+| Tecnología | Versión | Uso |
+|------------|---------|-----|
+| Angular | 21.1.x | Framework principal |
+| TypeScript | Strict mode | Tipado fuerte en todo el proyecto |
+| RxJS | Incluido en Angular | Gestión de asincronía y estados |
+| Angular Material | Última compatible | Componentes UI (spinner, chips, cards) |
+| Tailwind CSS | v3 | Estilos y diseño responsivo |
+| Lucide Angular | Última | Iconografía |
+| @ngx-env/builder | 21.0.1 | Variables de entorno desde .env |
+| ESLint | 19.x | Linting y calidad de código |
+| Vitest | Última | Testing unitario |
+
+---
+
+### Arquitectura del proyecto
+
+Se utiliza una arquitectura modular por features con standalone components (Angular 17+), separando claramente la capa de datos (core), las funcionalidades de negocio (features) y los elementos reutilizables (shared).
+```text
+src/app/
+├── core/
+│   ├── interceptors/
+│   │   ├── api-key.interceptor.ts      # Inyecta API key automáticamente
+│   │   └── error.interceptor.ts        # Manejo global de errores HTTP
+│   └── services/
+│       ├── tmdb.service.ts             # Todas las llamadas a la API
+│       └── favorites.service.ts        # Lógica de favoritos + localStorage
+│
+├── features/
+│   ├── movies/                         # Lazy loaded
+│   │   ├── pages/
+│   │   │   ├── search/                 # Búsqueda + listado
+│   │   │   └── detail/                 # Detalle de película
+│   │   ├── components/
+│   │   │   ├── movie-card/
+│   │   │   ├── movie-list/
+│   │   │   └── search-bar/
+│   │   └── movies.routes.ts
+│   └── favorites/                      # Lazy loaded
+│       ├── pages/
+│       └── favorites.routes.ts
+│
+├── shared/
+│   ├── components/
+│   │   ├── loading-spinner/
+│   │   ├── error-message/
+│   │   └── pagination/
+│   ├── models/                         # Interfaces TypeScript
+│   │   ├── movie.model.ts
+│   │   ├── movie-detail.model.ts
+│   │   ├── genre.model.ts
+│   │   ├── api-response.model.ts
+│   │   └── search-state.model.ts
+│   └── pipes/
+│       └── image-url.pipe.ts
+│
+└── environments/
+    ├── environment.ts                  # API key aquí, nunca en componentes
+    └── environment.prod.ts
+```
+
+---
+
+### Cronograma de desarrollo
+
+| Fase | Tarea | Tiempo estimado |
+|------|-------|-----------------|
+| Fase 1 | Setup y arquitectura base | 1–2h |
+| Fase 2 | Modelos y TmdbService | 1–2h |
+| Fase 2.5 | Tests: servicio e interceptors | 1–2h |
+| Fase 3 | Feature: Búsqueda y listado (RxJS) | 3–4h |
+| Fase 3.5 | Tests: SearchComponent y estados | 1–2h |
+| Fase 4 | Feature: Vista de detalle | 1–2h |
+| Fase 5 | Extras: favoritos, géneros, lazy loading | 2–4h |
+| Fase 5.5 | Tests: FavoritesService e ImageUrlPipe | 1h |
+| Fase 6 | Pulido final y README | 1–2h |
+| **TOTAL** | | **12–21h** |
+
+---
+
+### Detalle de las fases
+
+#### Fase 1 – Setup y arquitectura base
+Inicialización del proyecto con Angular CLI, Angular Material, Tailwind CSS v3 y ESLint. Configuración de `@ngx-env/builder` para gestión segura de la API key mediante archivo `.env`. Creación de `ApiKeyInterceptor` y `ErrorInterceptor` para manejo global de autenticación y errores.
+
+#### Fase 2 – Modelos y TmdbService
+Definición de interfaces TypeScript (strict, sin `any`) para `Movie`, `MovieDetail`, `Genre`, respuestas paginadas y estados de búsqueda. Implementación de `TmdbService` con métodos para búsqueda, detalle y lista de géneros. Uso de tipos genéricos (`PaginatedResponse<T>`).
+
+#### Fase 2.5 – Tests de la capa de datos e interceptors
+Tests unitarios con `HttpClientTestingModule` para `TmdbService`. Verificación de que `ApiKeyInterceptor` añade la API key solo a requests de TMDb. Validación de mensajes de error en `ErrorInterceptor` según el código HTTP.
+
+#### Fase 3 – Feature: Búsqueda y listado
+Implementación del pipeline RxJS en `SearchComponent` con `debounceTime(400)`, `distinctUntilChanged`, `switchMap`, `catchError` y `takeUntilDestroyed`. Gestión de 5 estados (`idle`, `loading`, `success`, `empty`, `error`) mediante un tipo enumerado. Sincronización de la paginación con query params (`?q=batman&page=2`). Componente `MovieCard` con imagen de fallback, extracción de año y visualización de rating.
+
+#### Fase 3.5 – Tests del SearchComponent
+Cobertura de casos: estado inicial, loading, éxito con resultados, vacío, error y cancelación de requests anteriores (validación de `switchMap`).
+
+#### Fase 4 – Feature: Vista de detalle
+Ruta `/movie/:id` que lee el parámetro y obtiene los detalles desde `TmdbService`. Visualización de título, tagline, sinopsis, géneros, rating, fecha y duración. Fondo con el poster de la película difuminado y degradado a negro. Botón de volver que restaura la búsqueda anterior mediante query params.
+
+#### Fase 5 – Extras
+`FavoritesService` con `BehaviorSubject` y persistencia en `localStorage`. Integración del corazón de favoritos en `MovieCard` y en la vista de detalle, con reactividad en tiempo real. Las cards favoritas muestran el ícono siempre visible sin necesidad de hover. Lazy loading configurado en las rutas de movies y favorites.
+
+#### Fase 5.5 – Tests adicionales
+Tests para `FavoritesService` (persistencia, no duplicados, reactividad) y para `ImageUrlPipe` (construcción de URL, fallback). Tests para `MovieCard` (favoritos, año, fallback de imagen).
+
+#### Fase 6 – Pulido final y README
+Verificación de que no exista ningún `any` en el código. Comprobación de que la API key solo aparece en `.env`. Ejecución de lint sin warnings y paso de todos los tests. Redacción del README con decisiones técnicas y justificaciones.
+
+---
