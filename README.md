@@ -151,6 +151,7 @@ En este proyecto se utilizaron agentes de inteligencia artificial para acelerar 
 - Gemini
   - Reaccion del README.md con los datos del proyecto
   - uso del localStorage para almacenar los favoritos
+  - creacion de la imagen para el poster no disponible
 
 ## Extras implementados
 
