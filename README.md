@@ -50,9 +50,6 @@ npm run build
 # Tests
 npm test
 
-# Tests con cobertura
-npm run test:coverage
-
 # Lint
 npm run lint
 ```
