@@ -17,7 +17,7 @@ Aplicación Angular que consume la API de The Movie Database (TMDb) para buscar 
 1. Clona el repositorio:
 ```bash
    git clone https://github.com/CamachoMoises/tmdb-angular-app
-   cd tmdb-app
+   cd tmdb-angular-app
 ```
 
 2. Instala las dependencias:
@@ -148,6 +148,9 @@ En este proyecto se utilizaron agentes de inteligencia artificial para acelerar 
   - Migración de Karma a Vitest como librería de pruebas.
   - Corrección de errores de ESLint.
   - Resolvió el conflicto de SSR/prerendering.
+- Gemini
+  - Reaccion del README.md con los datos del proyecto
+  - uso del localStorage para almacenar los favoritos
 
 ## Extras implementados
 
